@@ -1,0 +1,34 @@
+.chat-bubble {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    max-width: calc(100% - 60px);
+}
+.host,
+.time {
+    padding: 5px;
+    color: #b0b0b0;
+}
+
+.mine {
+    margin-left: auto;
+}.mine .host,
+ .mine .time {
+    text-align: end;
+}
+
+.content {
+    display: inline-block;
+    max-width: 100%;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 8px;
+    white-space: pre-wrap;
+    overflow-wrap: break-word; /* 或者使用 word-wrap: break-word; */
+}
+
+.mine .content {
+    background-color: #1890ff;
+    color: #fff;
+}
