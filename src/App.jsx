@@ -7,12 +7,19 @@ import './App.css';
 import ClientList from "./pages/clientList/index.jsx";
 import Message from "./pages/chat/components/message/index.jsx";
 import Chat from "./pages/chat/index.jsx";
+import {useRoutes} from "react-router-dom";
 const { Header, Sider, Content } = Layout;
+
 const App = () => {
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+
+
+    const routes = useRoutes([
+        { path: "/chat/:uuid", element: <Chat/> },
+    ]);
 
     return (
         <Layout>
@@ -28,7 +35,7 @@ const App = () => {
                         background: colorBgContainer,
                     }}
                 >
-                    <Chat />
+                    {routes}
                 </Content>
             </Layout>
         </Layout>

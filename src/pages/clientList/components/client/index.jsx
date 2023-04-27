@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import {Input, Button, Space, Card, Tooltip} from 'antd';
 import {EditOutlined, DeleteOutlined, CloseCircleOutlined} from '@ant-design/icons';
-import './clentButton.css'
+import './clent.css'
+import {Navigate, useNavigate} from "react-router-dom";
 
-export default function ClientButton({ name, onDelete }) {
+export default function Client({ uuid, name, onDelete }) {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(name);
+  const nav = useNavigate()
 
   const handleEdit = () => {
     setEditing(true);
@@ -24,8 +26,16 @@ export default function ClientButton({ name, onDelete }) {
     setValue(event.target.value);
   };
 
+    const handleDelete= () => {
+        onDelete(uuid)
+    };
+
+    const toChat = () => {
+        nav('/chat/'+ uuid)
+    };
+
   return (
-      <div className={'main'}>
+      <div onClick={toChat} className={'main'}>
           <Space className={'title'}>
               {editing ? (
                   <Input
@@ -45,7 +55,6 @@ export default function ClientButton({ name, onDelete }) {
               )}
 
           </Space>
-
           <Space className={'btns'}>
               {editing ? (
                   <Button onClick={handleCancel} size="small">
@@ -56,12 +65,10 @@ export default function ClientButton({ name, onDelete }) {
                       <EditOutlined />
                   </Button>
               )}
-              <Button onClick={onDelete} size="small">
+              <Button onClick={handleDelete} size="small">
                   <DeleteOutlined />
               </Button>
           </Space>
-
-
       </div>
   );
 }

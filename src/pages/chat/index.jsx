@@ -5,8 +5,10 @@ import {Button, Dropdown, Input, Space} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
 import './chat.less'
 import SendSetting from "./components/sendSetting/index.jsx";
+import {useParams} from "react-router-dom";
 
 export default function Chat() {
+    const {uuid} = useParams()
     const [msgList, setMsgList] = useState([]);
     const [content, setContent] = useState('');
     const [addr, setAddr] = useState('127.0.0.1:10250');
