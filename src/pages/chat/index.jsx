@@ -1,61 +1,31 @@
-import {Fragment, useEffect, useRef, useState} from "react";
-import {generateUid, isNotEmpty, isWebSocketNotEmpty} from "../../utils/common.js";
+import {Fragment, useEffect, useRef,} from "react";
+import {generateUid, isWebSocketNotEmpty} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
-import {Button, Dropdown, Input, Space} from "antd";
+import {Button, Dropdown, Input} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
 import './chat.less'
 import SendSetting from "./components/sendSetting/index.jsx";
 import {useParams} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {
+    addScheduleTask,
+    addWebsocket, cancelScheduleTask,
+    removeWebsocket, updateSendingState,
+} from "../../reducer/wsReducer.js";
+
+import {cleanMsg, addMsg, updateAddr, updateContent} from "../../reducer/clientReducer.js";
 
 export default function Chat() {
+    const dispatch = useDispatch()
     const {uuid} = useParams()
-    const [msgList, setMsgList] = useState([]);
-    const [content, setContent] = useState('');
-    const [addr, setAddr] = useState('127.0.0.1:10250');
-    const [isOpen, setOpen] = useState(false);
-    const [socket, setSocket] = useState(null);
-    const [sendConfig, setSendConfig] = useState({
-        timesMode: 1,
-        times:10,
-        interval: 1000
-    });
-    // const [sendInterval, setSendInterval] = useState(null);
-    let sendInterval = useRef(null);
-    const [sending, setSending] = useState(false);
+    const {messages: msgList = [], addr, sendConfig,content} = useSelector(state => state.clientReducer.clients[uuid]) || {}
+    const {socket, sending} = useSelector(state => state.connReducer.connections[uuid]) || {}
+
     let listRef = useRef(null)
-    const msgListRef = useRef(msgList);
-    const sendConfigRef = useRef(sendConfig);
     useEffect(() => {
         const scrollContainer = listRef.current;
         scrollContainer.scrollTop = scrollContainer.scrollHeight;
-        msgListRef.current = msgList
     }, [msgList]);
-
-    useEffect(() => {
-        sendConfigRef.current = sendConfig
-        console.log('config change',sendConfigRef.current)
-    }, [sendConfig]);
-
-    useEffect(() => {
-        window.addEventListener('beforeunload',saveWsData)
-        let localData = localStorage.getItem('wsData');
-        if (localData){
-            localData = JSON.parse(localData)
-            setMsgList(localData.history)
-            setSendConfig(localData.sendConfig)
-        }
-        return () => {
-            window.removeEventListener('beforeunload',saveWsData)
-        }
-    },[]);
-    const saveWsData = () => {
-        const wsData = {
-            history:msgListRef.current,
-            sendConfig: sendConfigRef.current
-        }
-        localStorage.setItem('wsData', JSON.stringify(wsData));
-    }
-
 
     // region websocket
     const initWebsock = () => {
@@ -69,20 +39,20 @@ export default function Chat() {
         socket.onopen = (e) => {
             console.log(e)
             addMine('websocket open!')
-            setOpen(true)
         }
         socket.onclose = () => {
             addMine('websocket close!')
-            setOpen(false)
+            cancelScheduleSend()
+            dispatch(removeWebsocket({socket, id: uuid}))
         }
         socket.onerror = () => {
-            addMine('websocket error!,可能是远端服务未开启')
-            setOpen(false)
+            addMine('websocket 错误!,可能是远端服务未开启')
         }
         socket.onmessage = e => {
             addOther(e.data)
         }
-        setSocket(socket)
+        dispatch(addWebsocket({socket, id: uuid}))
+        // setSocket(socket)
     };
     const sendMsg = () => {
         if (isWebSocketNotEmpty(socket)) {
@@ -93,6 +63,7 @@ export default function Chat() {
         }
     }
     const closeSocket = () => {
+        console.log(socket)
         if (isWebSocketNotEmpty(socket)) {
             socket.close()
         }
@@ -101,25 +72,27 @@ export default function Chat() {
     // endregion
 
     //region input value change
-    const handleChange = (event) => {
-        setContent(event.target.value);
+    const contentChange = (event) => {
+        dispatch(updateContent({id: uuid, content: event.target.value}))
     }
     const addrChange = (event) => {
-        setAddr(event.target.value);
+        dispatch(updateAddr({id: uuid, addr: event.target.value}))
     }
+
     //endregion
+    function isOpened() {
+        return socket && socket.readyState === WebSocket.OPEN
+    }
 
     //region add message
     function add(host, content, isMine) {
-        setMsgList(prevList => {
-            const msg = {
-                host,
-                uid: generateUid(),
-                content: content,
-                isMine: isMine
-            }
-            return [...prevList, msg]
-        })
+        const msg = {
+            host,
+            uid: generateUid(),
+            content: content,
+            isMine: isMine
+        }
+        dispatch(addMsg({id: uuid, message: msg}))
     }
 
     function addMine(msg) {
@@ -141,11 +114,12 @@ export default function Chat() {
         let interval = null
         if (sendConfig.timesMode === 1) {
             interval = setInterval(() => {
-                if (sendConfig.times <= count) {
+                if (sendConfig.times >= count) {
+                    count++
+                    sendMsg()
+                } else {
                     cancelScheduleSend()
                 }
-                count++
-                sendMsg()
             }, sendConfig.interval);
         }
         if (sendConfig.timesMode === 2) {
@@ -154,24 +128,24 @@ export default function Chat() {
             }, sendConfig.interval);
 
         }
-        sendInterval.current = interval
-        setSending(true)
+        dispatch(addScheduleTask({id: uuid, scheduleTask: interval}))
+        dispatch(updateSendingState({id: uuid, sending: true}))
     }
     const cancelScheduleSend = () => {
-        clearInterval(sendInterval.current)
-        setSending(false)
+        dispatch(cancelScheduleTask({id: uuid, sending: false}))
     }
     const handleScheduleSend = () => {
         if (sending) {
             cancelScheduleSend()
         }
-        if (!sending){
+        if (!sending) {
             scheduleSend()
         }
     }
-    const menuClick = ({ key }) => {
-        if (key === 'clear'){
-            setMsgList([])
+
+    const menuClick = ({key}) => {
+        if (key === 'clear') {
+            dispatch(cleanMsg({id: uuid}))
         }
     };
     const items = [
@@ -193,12 +167,13 @@ export default function Chat() {
         <Fragment>
             <div style={{height: '100%', display: "flex", flexDirection: "column"}}>
                 <div className="header">
-                    <Input disabled={isOpen} onChange={addrChange} addonBefore="ws://" defaultValue="127.0.0.1:10250"/>
-                    <Button disabled={isOpen} onClick={initWebsock}>连接</Button>
-                    <Button disabled={!isOpen} onClick={closeSocket}>断开</Button>
-                    <Dropdown placement="bottomLeft" menu={{ items,onClick:menuClick,}} trigger={['click']}>
+                    <Input disabled={isOpened()} value={addr} onChange={addrChange} addonBefore="ws://"
+                           defaultValue="127.0.0.1:10250"/>
+                    <Button disabled={isOpened()} onClick={initWebsock}>连接</Button>
+                    <Button disabled={!isOpened()} onClick={closeSocket}>断开</Button>
+                    <Dropdown placement="bottomLeft" menu={{items, onClick: menuClick,}} trigger={['click']}>
                         <Button onClick={(e) => e.preventDefault()}>
-                                ...
+                            ...
                         </Button>
                     </Dropdown>
                 </div>
@@ -206,10 +181,11 @@ export default function Chat() {
                     {list}
                 </div>
                 <div className={'footer'}>
-                    <SendSetting handleConfig={setSendConfig} sendConfig={sendConfig}/>
-                    <TextArea rows={1} maxLength={6} disabled={!isOpen} onChange={handleChange}/>
-                    <Button disabled={!isOpen} onClick={handleScheduleSend}>{sending ? '停止发送':'定时发送'}</Button>
-                    <Button disabled={!isOpen} onClick={sendMsg}>发送</Button>
+                    <SendSetting id={uuid}/>
+                    <TextArea rows={1} maxLength={6} value={content} disabled={!isOpened()} onChange={contentChange}/>
+                    <Button disabled={!isOpened()}
+                            onClick={handleScheduleSend}>{sending ? '停止发送' : '定时发送'}</Button>
+                    <Button disabled={!isOpened()} onClick={sendMsg}>发送</Button>
                 </div>
             </div>
         </Fragment>

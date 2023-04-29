@@ -1,7 +1,12 @@
 import {Button, Input, Modal, Radio, Space} from 'antd';
 import {useEffect, useState} from 'react';
 import {SettingOutlined} from "@ant-design/icons";
-const SendSetting = ({sendConfig,handleConfig}) => {
+import {useDispatch, useSelector} from "react-redux";
+import {updateSendConfig} from "../../../../reducer/clientReducer.js";
+const SendSetting = ({id}) => {
+    let dispatch = useDispatch();
+    const {sendConfig={}} = useSelector(state => state.clientReducer.clients[id]) || {}
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [timesMode, setTimesMode] = useState(sendConfig.timesMode);
     const [times, setTimes] = useState(sendConfig.times);
@@ -25,7 +30,7 @@ const SendSetting = ({sendConfig,handleConfig}) => {
             times,
             interval
         }
-        handleConfig(conf)
+        dispatch(updateSendConfig({id:id,sendConfig:conf}))
         setIsModalOpen(false);
     };
     const handleCancel = () => {
@@ -44,7 +49,7 @@ const SendSetting = ({sendConfig,handleConfig}) => {
                             <Radio value={1}>
                                 <Space>
                                     持续发送：
-                                    <Input value={times} onChange={e => setTimes(e.target.value)} type={'number'} addonAfter={'次'} />
+                                    <Input value={times} onChange={e => setTimes(Number(e.target.value))} type={'number'} addonAfter={'次'} />
                                 </Space>
                             </Radio>
                             <Radio value={2}>
@@ -55,7 +60,7 @@ const SendSetting = ({sendConfig,handleConfig}) => {
                 </Space>
                 <Space style={{marginTop :10}}>
                     <div>发送间隔：</div>
-                    <Input value={interval} onChange={e => setInterval(e.target.value)} step={100} type={'number'} addonAfter={'ms'}/>
+                    <Input value={interval} onChange={e => setInterval(Number(e.target.value))} step={100} type={'number'} addonAfter={'ms'}/>
                 </Space>
             </Modal>
         </>
