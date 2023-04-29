@@ -112,9 +112,25 @@ export const clientSlice = createSlice({
                 }
             };
         },
+        save: (state) => {
+            localStorage.setItem('clientConfig',JSON.stringify(state.clients))
+            return state;
+        },
+        load: (state) => {
+            let conf = localStorage.getItem('clientConfig');
+            if (conf){
+                const clients = JSON.parse(conf)
+                return {
+                    ...state,
+                    clients:clients
+                };
+            }else {
+                return state
+            }
+        },
     },
 })
 
-export const { addClient,removeClient, updateContent,updateAddr,updateSendConfig,addMsg,cleanMsg } = clientSlice.actions
+export const {load, save, addClient,removeClient, updateContent,updateAddr,updateSendConfig,addMsg,cleanMsg } = clientSlice.actions
 
 export default clientSlice.reducer

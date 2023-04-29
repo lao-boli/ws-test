@@ -1,20 +1,29 @@
-import {
-    MenuFoldOutlined, MenuUnfoldOutlined,
-} from '@ant-design/icons';
-import { Button, Layout, theme } from 'antd';
-import {useEffect, useRef, useState} from 'react';
+import { Layout, theme } from 'antd';
+import {useEffect,  useState} from 'react';
 import './App.css';
 import ClientList from "./pages/clientList/index.jsx";
-import Message from "./pages/chat/components/message/index.jsx";
 import Chat from "./pages/chat/index.jsx";
 import {useRoutes} from "react-router-dom";
-const { Header, Sider, Content } = Layout;
+import {useDispatch} from "react-redux";
+import {load, save} from "./reducer/clientReducer.js";
+const {  Sider, Content } = Layout;
 
 const App = () => {
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
     } = theme.useToken();
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(load())
+        window.addEventListener('beforeunload',saveClients)
+        return () => {
+            window.removeEventListener('beforeunload',saveClients)
+        }
+    },[])
+    const saveClients = () => {
+        dispatch(save())
+    }
 
 
     const routes = useRoutes([
