@@ -1,6 +1,6 @@
-import {Button, Input, Modal, Radio, Space} from 'antd';
+import {Button, Input, Modal, Radio, Space, Tooltip} from 'antd';
 import {useEffect, useState} from 'react';
-import {SettingOutlined} from "@ant-design/icons";
+import {SendOutlined, SettingOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {updateSendConfig} from "../../../../reducer/clientReducer.js";
 const SendSetting = ({id}) => {
@@ -38,9 +38,12 @@ const SendSetting = ({id}) => {
     };
     return (
         <>
-            <Button type="primary" onClick={showModal}>
-                <SettingOutlined />
-            </Button>
+
+            <Tooltip title={'发送设置'}>
+                <Button type="primary" onClick={showModal}>
+                    <SettingOutlined />
+                </Button>
+            </Tooltip>
             <Modal title="发送设置" cancelText={'取消'} okText={'确认'} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <Space>
                     <div>发送设定</div>

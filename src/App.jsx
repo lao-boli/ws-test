@@ -7,30 +7,31 @@ import {useRoutes} from "react-router-dom";
 import {useDispatch} from "react-redux";
 import {load, save} from "./reducer/clientReducer.js";
 import {LeftOutlined} from "@ant-design/icons";
-const {  Sider, Content } = Layout;
+
+const {Sider, Content} = Layout;
 
 const App = () => {
     const collapseIcon = useRef()
     const [collapsed, setCollapsed] = useState(false);
     const {
-        token: { colorBgContainer },
+        token: {colorBgContainer},
     } = theme.useToken();
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(load())
-        window.addEventListener('beforeunload',saveClients)
+        window.addEventListener('beforeunload', saveClients)
         return () => {
-            window.removeEventListener('beforeunload',saveClients)
+            window.removeEventListener('beforeunload', saveClients)
         }
-    },[])
+    }, [])
     const saveClients = () => {
         dispatch(save())
     }
     const handleCollapse = () => {
         let icon = collapseIcon.current;
-        if (collapsed){
+        if (collapsed) {
             icon.classList.remove('rotate')
-        }else {
+        } else {
             icon.classList.add('rotate')
         }
         setCollapsed(!collapsed)
@@ -38,7 +39,7 @@ const App = () => {
 
 
     const routes = useRoutes([
-        { path: "/chat/:uuid", element: <Chat/> },
+        {path: "/chat/:uuid", element: <Chat/>},
     ]);
 
     return (
@@ -46,16 +47,26 @@ const App = () => {
             <Sider
                 trigger={null}
                 collapsedWidth={0}
+                width={'240px'}
                 collapsible
                 style={{
                     willChange: 'width',
-                   transition: 'all .2s,background 0s'
+                    background: "white",
+                    maxHeight: document.documentElement.clientHeight,
+                    transition: 'all .2s,background 0s',
                 }}
                 collapsed={collapsed}
                 onCollapse={(value) => setCollapsed(value)}
                 className={collapsed ? 'collapsed' : ''}
             >
-                <ClientList/>
+                <div style={{
+                    maxHeight: document.documentElement.clientHeight,
+                    width: '240px',
+                    overflow: "hidden",
+                    overflowY: "auto"
+                }}>
+                    <ClientList/>
+                </div>
                 <div ref={collapseIcon} onClick={handleCollapse} className={'collapsed-icon'}>
                     <LeftOutlined/>
                 </div>
@@ -63,9 +74,9 @@ const App = () => {
             <Layout>
                 <Content
                     style={{
-                        margin: '24px 16px',
+                        margin: '0px 16px',
                         padding: 24,
-                        maxHeight: document.documentElement.clientHeight - 50,
+                        maxHeight: document.documentElement.clientHeight,
                         background: colorBgContainer,
                     }}
                 >

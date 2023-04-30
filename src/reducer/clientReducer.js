@@ -63,6 +63,21 @@ export const clientSlice = createSlice({
                 }
             };
         },
+        updateTitle: (state, action) => {
+            if(state.clients[action.payload.id] == null) {
+                return state;
+            }
+            return {
+                ...state,
+                clients: {
+                    ...state.clients,
+                    [action.payload.id]: {
+                        ...state.clients[action.payload.id],
+                        title: action.payload.title,
+                    }
+                }
+            };
+        },
 
         updateContent: (state, action) => {
             if(state.clients[action.payload.id] == null) {
@@ -131,6 +146,6 @@ export const clientSlice = createSlice({
     },
 })
 
-export const {load, save, addClient,removeClient, updateContent,updateAddr,updateSendConfig,addMsg,cleanMsg } = clientSlice.actions
+export const {load, save, addClient,removeClient, updateTitle,updateContent,updateAddr,updateSendConfig,addMsg,cleanMsg } = clientSlice.actions
 
 export default clientSlice.reducer

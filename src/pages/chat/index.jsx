@@ -1,7 +1,7 @@
 import {Fragment, useEffect, useRef,} from "react";
 import {generateUid, isWebSocketNotEmpty} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
-import {Button, Dropdown, Input, List} from "antd";
+import {Button, Dropdown, Input, List, Tooltip} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
 import './chat.less'
 import SendSetting from "./components/sendSetting/index.jsx";
@@ -14,11 +14,17 @@ import {
 } from "../../reducer/wsReducer.js";
 
 import {cleanMsg, addMsg, updateAddr, updateContent} from "../../reducer/clientReducer.js";
+import {ClockCircleOutlined, DisconnectOutlined, LinkOutlined, SendOutlined, StopOutlined} from "@ant-design/icons";
 
 export default function Chat() {
     const dispatch = useDispatch()
     const {uuid} = useParams()
-    const {messages: msgList = [], addr, sendConfig,content} = useSelector(state => state.clientReducer.clients[uuid]) || {}
+    const {
+        messages: msgList = [],
+        addr,
+        sendConfig,
+        content
+    } = useSelector(state => state.clientReducer.clients[uuid]) || {}
     const {socket, sending} = useSelector(state => state.connReducer.connections[uuid]) || {}
 
     let listRef = useRef(null)
@@ -81,7 +87,18 @@ export default function Chat() {
 
     //endregion
     function isOpened() {
+        console.log('isopen')
         return socket && socket.readyState === WebSocket.OPEN
+    }
+
+    const handleLink = () => {
+        console.log(isOpened())
+        if (isOpened()) {
+            closeSocket()
+        } else {
+            initWebsock()
+        }
+
     }
 
     //region add message
@@ -155,14 +172,14 @@ export default function Chat() {
         },
     ];
     const list = msgList.map(val =>
-            <Message
-                key={val.uid}
-                host={val.host}
-                uid={val.uid}
-                content={val.content}
-                isMine={val.isMine}
-            />
-        );
+        <Message
+            key={val.uid}
+            host={val.host}
+            uid={val.uid}
+            content={val.content}
+            isMine={val.isMine}
+        />
+    );
 
     return (
         <Fragment>
@@ -170,25 +187,37 @@ export default function Chat() {
                 <div className="header">
                     <Input disabled={isOpened()} value={addr} onChange={addrChange} addonBefore="ws://"
                            defaultValue="127.0.0.1:10250"/>
-                    <Button disabled={isOpened()} onClick={initWebsock}>连接</Button>
-                    <Button disabled={!isOpened()} onClick={closeSocket}>断开</Button>
+
+                    <Tooltip title={isOpened() ? '断开' : '连接'}>
+                        <Button onClick={handleLink}>
+                            {isOpened() ? (<DisconnectOutlined/>) : (<LinkOutlined/>)}
+                        </Button>
+                    </Tooltip>
                     <Dropdown placement="bottomLeft" menu={{items, onClick: menuClick,}} trigger={['click']}>
                         <Button onClick={(e) => e.preventDefault()}>
                             ...
                         </Button>
                     </Dropdown>
                 </div>
-                <div ref={listRef} style={{scrollBehavior: "smooth",overflow: "auto", height: '100%'}}>
-                    <List >
+                <div ref={listRef} style={{scrollBehavior: "smooth", overflow: "auto", height: '100%'}}>
+                    <List>
                         {list}
                     </List>
                 </div>
                 <div className={'footer'}>
                     <SendSetting id={uuid}/>
-                    <TextArea rows={1} maxLength={6} value={content} disabled={!isOpened()} onChange={contentChange}/>
-                    <Button disabled={!isOpened()}
-                            onClick={handleScheduleSend}>{sending ? '停止发送' : '定时发送'}</Button>
-                    <Button disabled={!isOpened()} onClick={sendMsg}>发送</Button>
+                    <TextArea rows={1} value={content} disabled={!isOpened()} onChange={contentChange}/>
+                    <Tooltip title={sending ? '停止发送' : '定时发送'}>
+                        <Button disabled={!isOpened()}
+                                onClick={handleScheduleSend}>
+                            {sending ? (<StopOutlined/>) : (<ClockCircleOutlined/>)}
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip title={'发送'}>
+                        <Button disabled={!isOpened()} onClick={sendMsg}><SendOutlined/></Button>
+                    </Tooltip>
+
                 </div>
             </div>
         </Fragment>

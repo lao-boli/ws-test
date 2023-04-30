@@ -4,14 +4,15 @@ import {Button} from "antd";
 import {generateUid, isNotEmpty} from "../../utils/common.js";
 import {useDispatch, useSelector} from "react-redux";
 import {addClient, removeClient} from "../../reducer/clientReducer.js";
-export default function ClientList(){
+
+export default function ClientList() {
     const defaultClient = {
         id: generateUid(),
         title: 'client',
         addr: '127.0.0.1:10250',
         sendConfig: {
             timesMode: 1,
-            times:10,
+            times: 10,
             interval: 1000
         },
     }
@@ -20,18 +21,19 @@ export default function ClientList(){
     if (!isNotEmpty(clients)) {
         dispatch(addClient(defaultClient))
     }
+
     function add() {
         dispatch(addClient(defaultClient))
     }
-    function remove(id) {
-        dispatch(removeClient({ id:id }))
-    }
 
-    const list = Object.keys(clients).map(id => <div key={id} style={{marginBottom: "10px"}}><Client onDelete={remove} uuid={id}/></div>)
+    const list = Object.keys(clients).map(id =>
+        <div key={id}>
+            <Client uuid={id}/>
+        </div>)
 
     return (
         <Fragment>
-            <Button onClick={add} style={{width: '90%',marginTop: 20,marginBottom: "10px"}}>添加客户端</Button>
+            <Button type={"primary"} onClick={add} style={{height:'40px', width: '90%',margin:'20px 0px 10px 10px'}}>添加客户端</Button>
             {list}
         </Fragment>
 
