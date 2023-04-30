@@ -1,7 +1,7 @@
 import {Fragment, useEffect, useRef,} from "react";
 import {generateUid, isWebSocketNotEmpty} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
-import {Button, Dropdown, Input} from "antd";
+import {Button, Dropdown, Input, List} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
 import './chat.less'
 import SendSetting from "./components/sendSetting/index.jsx";
@@ -155,13 +155,14 @@ export default function Chat() {
         },
     ];
     const list = msgList.map(val =>
-        <Message
-            key={val.uid}
-            host={val.host}
-            uid={val.uid}
-            content={val.content}
-            isMine={val.isMine}
-        />);
+            <Message
+                key={val.uid}
+                host={val.host}
+                uid={val.uid}
+                content={val.content}
+                isMine={val.isMine}
+            />
+        );
 
     return (
         <Fragment>
@@ -177,8 +178,10 @@ export default function Chat() {
                         </Button>
                     </Dropdown>
                 </div>
-                <div ref={listRef} style={{overflow: "auto", height: '100%'}}>
-                    {list}
+                <div ref={listRef} style={{scrollBehavior: "smooth",overflow: "auto", height: '100%'}}>
+                    <List >
+                        {list}
+                    </List>
                 </div>
                 <div className={'footer'}>
                     <SendSetting id={uuid}/>
