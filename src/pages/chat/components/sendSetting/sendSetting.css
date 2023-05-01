@@ -1,0 +1,10 @@
+.ant-space {
+    margin-bottom: 10px
+}
+.row {
+    display: flex;
+}
+.row > * {
+    margin: 10px;
+    align-self: end;
+}
