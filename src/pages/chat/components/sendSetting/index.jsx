@@ -121,7 +121,9 @@ const SendSetting = ({id}) => {
                     </Radio.Group>
                 </Space>
                 <div className={'row'}>
-                    <TextArea rows={3} value={paramConfig.pattern} onChange={handlePatternChange}/>
+                    <TextArea rows={3} value={paramConfig.pattern}
+                              onChange={handlePatternChange}
+                    />
                     <ParamSetting paramConfig={paramConfig} paramConfirm={paramConfirm}/>
                 </div>
             </Modal>

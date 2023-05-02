@@ -17,7 +17,6 @@ import {cleanMsg, addMsg, updateAddr, updateContent} from "../../reducer/clientR
 import {ClockCircleOutlined, DisconnectOutlined, LinkOutlined, SendOutlined, StopOutlined} from "@ant-design/icons";
 import {createMsg} from "../../utils/param-util.js";
 export default function Chat() {
-    const [messageApi, contextHolder] = message.useMessage();
     const dispatch = useDispatch()
     const {uuid} = useParams()
     const {

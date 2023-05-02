@@ -1,6 +1,7 @@
 import {Input} from 'antd';
 import {useEffect, useState} from 'react';
 import './paramSetting.css'
+import HexInput from "../../../../components/HexInput.jsx";
 
 const ParamItem = ({uid, paramConfig, dataChange}) => {
     const [val, setVal] = useState('');
@@ -29,18 +30,34 @@ const ParamItem = ({uid, paramConfig, dataChange}) => {
                 <div style={{flexShrink: 0}}>
                     变动数值:{val}
                 </div>
-                <Input
-                    type={'number'}
-                    value={low}
-                    onChange={(e) => handleLowChange(Number(e.target.value))}
-                    addonBefore={'下界'}
-                />
-                <Input
-                    type={'number'}
-                    value={high}
-                    onChange={(e) => handleHighChange(Number(e.target.value))}
-                    addonBefore={'上界'}
-                />
+                {val === '%x' || val === '%X'? (
+                    <HexInput
+                        value={low}
+                        onChange={(e) => handleLowChange(e.target.value)}
+                        addonBefore={'下界'}
+                    />
+                ):(
+                    <Input
+                        type={'number'}
+                        value={low}
+                        onChange={(e) => handleLowChange(Number(e.target.value))}
+                        addonBefore={'下界'}
+                    />
+                )}
+                {val === '%x' || val === '%X'? (
+                    <HexInput
+                        value={high}
+                        onChange={(e) => handleHighChange(e.target.value)}
+                        addonBefore={'上界'}
+                    />
+                ):(
+                    <Input
+                        type={'number'}
+                        value={high}
+                        onChange={(e) => handleHighChange(Number(e.target.value))}
+                        addonBefore={'上界'}
+                    />
+                )}
             </div>
         </>
     );
