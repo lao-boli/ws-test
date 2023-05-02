@@ -1,7 +1,7 @@
 import {Fragment, useEffect, useRef,} from "react";
 import {generateUid, isWebSocketNotEmpty} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
-import {Button, Dropdown, Input, List, Tooltip} from "antd";
+import {Button, Dropdown, Input, List, Tooltip,message} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
 import './chat.less'
 import SendSetting from "./components/sendSetting/index.jsx";
@@ -15,8 +15,9 @@ import {
 
 import {cleanMsg, addMsg, updateAddr, updateContent} from "../../reducer/clientReducer.js";
 import {ClockCircleOutlined, DisconnectOutlined, LinkOutlined, SendOutlined, StopOutlined} from "@ant-design/icons";
-
+import {createMsg} from "../../utils/param-util.js";
 export default function Chat() {
+    const [messageApi, contextHolder] = message.useMessage();
     const dispatch = useDispatch()
     const {uuid} = useParams()
     const {
@@ -60,10 +61,24 @@ export default function Chat() {
         dispatch(addWebsocket({socket, id: uuid}))
         // setSocket(socket)
     };
-    const sendMsg = () => {
+    const sendMsg = (msg) => {
+        socket.send(msg)
+        addMine(msg)
+    }
+    const handleSendMsg = () => {
         if (isWebSocketNotEmpty(socket)) {
-            socket.send(content)
-            addMine(content)
+            if (sendConfig.sendMode === 1){
+                sendMsg(content)
+            }
+            if (sendConfig.sendMode === 2){
+                try {
+                    const msg = createMsg(sendConfig.paramConfig);
+                    sendMsg(msg)
+                } catch (e) {
+                    message.error(e.toString());
+
+                }
+            }
         } else {
             addMine('websocket未连接')
         }
@@ -133,7 +148,7 @@ export default function Chat() {
             interval = setInterval(() => {
                 if (sendConfig.times >= count) {
                     count++
-                    sendMsg()
+                    handleSendMsg()
                 } else {
                     cancelScheduleSend()
                 }
@@ -141,7 +156,7 @@ export default function Chat() {
         }
         if (sendConfig.timesMode === 2) {
             interval = setInterval(() => {
-                sendMsg()
+                handleSendMsg()
             }, sendConfig.interval);
 
         }
@@ -215,7 +230,7 @@ export default function Chat() {
                     </Tooltip>
 
                     <Tooltip title={'发送'}>
-                        <Button disabled={!isOpened()} onClick={sendMsg}><SendOutlined/></Button>
+                        <Button disabled={!isOpened()} onClick={handleSendMsg}><SendOutlined/></Button>
                     </Tooltip>
 
                 </div>

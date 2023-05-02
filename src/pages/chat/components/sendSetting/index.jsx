@@ -1,6 +1,6 @@
 import {Button, Input, Modal, Radio, Space, Tooltip} from 'antd';
 import {useEffect, useState} from 'react';
-import {SendOutlined, SettingOutlined} from "@ant-design/icons";
+import {SettingOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {updateSendConfig} from "../../../../reducer/clientReducer.js";
 import './sendSetting.css'
@@ -16,19 +16,19 @@ const SendSetting = ({id}) => {
     const [timesMode, setTimesMode] = useState(sendConfig.timesMode);
     const [times, setTimes] = useState(sendConfig.times);
     const [interval, setInterval] = useState(sendConfig.interval);
-    const [sendMode, setSendMode] = useState(sendConfig.sendMode) || {};
+    const [sendMode, setSendMode] = useState(sendConfig.sendMode);
     const [paramConfig, setParamConfig] = useState(sendConfig.paramConfig || {
         pattern: 'test%d%a',
         bounds: []
     });
-    console.log(paramConfig)
-    console.log(sendConfig.paramConfig)
 
     useEffect(() => {
         setTimesMode(sendConfig.timesMode);
+        setSendMode(sendConfig.sendMode);
         setTimes(sendConfig.times);
         setInterval(sendConfig.interval);
-        if (sendConfig.paramConfig){
+
+        if (sendConfig.paramConfig) {
             setParamConfig(sendConfig.paramConfig)
         }
     }, [sendConfig]);
@@ -43,13 +43,13 @@ const SendSetting = ({id}) => {
 
     const handlePatternChange = (e) => {
         let pattern = e.target.value;
-       const bounds = decode(pattern)
+        const bounds = decode(pattern)
         const conf = {
             pattern,
             bounds
         }
         setParamConfig(conf)
-        console.log('conf',conf)
+        console.log('conf', conf)
         console.log(paramConfig)
     };
     const showModal = () => {
@@ -59,6 +59,7 @@ const SendSetting = ({id}) => {
     const handleOk = () => {
         const conf = {
             timesMode,
+            sendMode,
             times,
             interval,
             paramConfig
@@ -76,7 +77,6 @@ const SendSetting = ({id}) => {
     };
     return (
         <>
-
             <Tooltip title={'发送设置'}>
                 <Button type="primary" onClick={showModal}>
                     <SettingOutlined/>

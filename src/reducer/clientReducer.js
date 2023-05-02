@@ -31,6 +31,7 @@ export const clientSlice = createSlice({
                 clients: restClients
             };
         },
+
         updateSendConfig: (state, action) => {
             // console.log(state.clients,action.payload.id)
             if(state.clients[action.payload.id] == null) {
