@@ -1,6 +1,6 @@
-import {Button, Input, Modal, Radio, Space, Tooltip} from 'antd';
+import {Button, Input, Modal, Popover, Radio, Space, Tooltip} from 'antd';
 import {useEffect, useState} from 'react';
-import {SettingOutlined} from "@ant-design/icons";
+import {QuestionCircleOutlined, SettingOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {updateSendConfig} from "../../../../reducer/clientReducer.js";
 import './sendSetting.css'
@@ -8,7 +8,20 @@ import TextArea from "antd/es/input/TextArea.js";
 import ParamSetting from "../paramSetting/index.jsx";
 import {decode} from "../../../../utils/param-util.js";
 
+const tip = (
+    <div>
+        <p>遵循sprintf规范,格式字符串中的占位符用%标记，<br/>后面跟着一个或多个以下元素:</p>
+        <p>% — 转义字符&apos;%&apos;</p>
+        <p>d — 10进制整数</p>
+        <p>f — 浮点型数字,&apos;.nf&apos;表示为该浮点数保留n位小数</p>
+        <p>o — 8进制整数</p>
+        <p>x — 小写的16进制整数</p>
+        <p>X — 大写的16进制整数</p>
+    </div>
+)
+// s/\(.*\)/<p>\1<\/p>/g
 const SendSetting = ({id}) => {
+    console.log(tip)
     let dispatch = useDispatch();
     const {sendConfig = {}} = useSelector(state => state.clientReducer.clients[id]) || {}
 
@@ -124,7 +137,12 @@ const SendSetting = ({id}) => {
                     <TextArea rows={3} value={paramConfig.pattern}
                               onChange={handlePatternChange}
                     />
-                    <ParamSetting paramConfig={paramConfig} paramConfirm={paramConfirm}/>
+                    <div>
+                        <Popover content={tip} title="格式参考" trigger="click">
+                            <QuestionCircleOutlined/>
+                        </Popover>
+                        <ParamSetting paramConfig={paramConfig} paramConfirm={paramConfirm}/>
+                    </div>
                 </div>
             </Modal>
         </>
