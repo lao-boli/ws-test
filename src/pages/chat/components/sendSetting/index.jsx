@@ -1,4 +1,4 @@
-import {Button, Input, Modal, Popover, Radio, Space, Tooltip} from 'antd';
+import {Button, Input, Modal, Popover, Radio, Space, Tabs, Tooltip} from 'antd';
 import {useEffect, useState} from 'react';
 import {QuestionCircleOutlined, SettingOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
@@ -7,7 +7,15 @@ import './sendSetting.css'
 import TextArea from "antd/es/input/TextArea.js";
 import ParamSetting from "../paramSetting/index.jsx";
 import {decode} from "../../../../utils/param-util.js";
+import  {BidirectionalMap} from '../../../../utils/BidirectionalMap.js';
+const OperationsSlot = {
+    left: <span style={{marginRight:10}}>发送模式:</span>
+};
 
+const sendModeMap = new BidirectionalMap({
+    'plain':1,
+    'param':2,
+})
 const tip = (
     <div>
         <p>遵循sprintf规范,格式字符串中的占位符用%标记，<br/>后面跟着一个或多个以下元素:</p>
@@ -21,7 +29,6 @@ const tip = (
 )
 // s/\(.*\)/<p>\1<\/p>/g
 const SendSetting = ({id}) => {
-    console.log(tip)
     let dispatch = useDispatch();
     const {sendConfig = {}} = useSelector(state => state.clientReducer.clients[id]) || {}
 
@@ -50,8 +57,10 @@ const SendSetting = ({id}) => {
         setTimesMode(e.target.value)
     };
 
-    const handleSendMode = (e) => {
-        setSendMode(e.target.value)
+    const handleSendMode = (key) => {
+        console.log(sendModeMap)
+        console.log(sendModeMap.getValue(key));
+        setSendMode(sendModeMap.getValue(key))
     };
 
     const handlePatternChange = (e) => {
@@ -62,8 +71,6 @@ const SendSetting = ({id}) => {
             bounds
         }
         setParamConfig(conf)
-        console.log('conf', conf)
-        console.log(paramConfig)
     };
     const showModal = () => {
         setIsModalOpen(true);
@@ -81,9 +88,7 @@ const SendSetting = ({id}) => {
         setIsModalOpen(false);
     };
     const paramConfirm = (conf) => {
-        console.log(conf)
         setParamConfig(conf)
-
     }
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -120,30 +125,32 @@ const SendSetting = ({id}) => {
                     <Input value={interval} onChange={e => setInterval(Number(e.target.value))} step={100}
                            type={'number'} addonAfter={'ms'}/>
                 </Space>
-                <Space style={{marginTop: 10}}>
-                    <div>发送模式</div>
-                    <Radio.Group onChange={handleSendMode} value={sendMode}>
-                        <Space>
-                            <Radio value={1}>
-                                普通文本
-                            </Radio>
-                            <Radio value={2}>
-                                自定义参数
-                            </Radio>
-                        </Space>
-                    </Radio.Group>
-                </Space>
-                <div className={'row'}>
-                    <TextArea rows={3} value={paramConfig.pattern}
-                              onChange={handlePatternChange}
-                    />
-                    <div>
-                        <Popover content={tip} title="格式参考" trigger="click">
-                            <QuestionCircleOutlined/>
-                        </Popover>
-                        <ParamSetting paramConfig={paramConfig} paramConfirm={paramConfirm}/>
-                    </div>
+                <div>
+                    <Tabs onChange={handleSendMode}
+                          tabBarExtraContent={OperationsSlot}
+                          activeKey={sendModeMap.getKey(sendMode)}
+                    >
+                        <Tabs.TabPane key={'plain'} tab={'普通文本'}>
+                            <div>
+                                请直接在输入框中输入数据
+                            </div>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane key={'param'} tab={'自定义格式'}>
+                            <div className={'row'}>
+                                <TextArea rows={3} value={paramConfig.pattern}
+                                          onChange={handlePatternChange}
+                                />
+                                <div>
+                                    <Popover content={tip} title="格式参考" trigger="click">
+                                        <QuestionCircleOutlined/>
+                                    </Popover>
+                                    <ParamSetting paramConfig={paramConfig} paramConfirm={paramConfirm}/>
+                                </div>
+                            </div>
+                        </Tabs.TabPane>
+                    </Tabs>
                 </div>
+
             </Modal>
         </>
     );
