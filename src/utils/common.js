@@ -1,3 +1,6 @@
+export function safeEval(script){
+    return Function('"use strict";return ' +script)();
+}
 export function generateUid(){
     let dt = new Date().getTime();
     let uuid = 'xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

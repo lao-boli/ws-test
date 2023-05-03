@@ -12,8 +12,14 @@ export default function ClientList() {
         addr: '127.0.0.1:10250',
         sendConfig: {
             timesMode: 1,
+            sendMode: 1,
             times: 10,
-            interval: 1000
+            interval: 1000,
+            jsScript: 'function() {\n}',
+            paramConfig: {
+                pattern: '',
+                bounds: []
+            }
         },
     }
     let clients = useSelector(state => state.clientReducer.clients)

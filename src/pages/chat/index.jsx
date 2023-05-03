@@ -1,5 +1,5 @@
 import {Fragment, useEffect, useRef,} from "react";
-import {generateUid, isWebSocketNotEmpty} from "../../utils/common.js";
+import {generateUid, isWebSocketNotEmpty, safeEval} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
 import {Button, Dropdown, Input, List, Tooltip,message} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
@@ -75,7 +75,14 @@ export default function Chat() {
                     sendMsg(msg)
                 } catch (e) {
                     message.error(e.toString());
-
+                }
+            }
+            if (sendConfig.sendMode === 3){
+                try {
+                    const msg = safeEval(sendConfig.jsScript)();
+                    sendMsg(msg)
+                } catch (e) {
+                    message.error(e.toString());
                 }
             }
         } else {
@@ -101,7 +108,6 @@ export default function Chat() {
 
     //endregion
     function isOpened() {
-        console.log('isopen')
         return socket && socket.readyState === WebSocket.OPEN
     }
 
@@ -127,11 +133,8 @@ export default function Chat() {
     }
 
     function addMine(msg) {
-        if (typeof msg === 'string') {
-            add('我', msg, true)
-        } else {
-            add('我', content, true)
-        }
+        console.log(msg)
+        add('我', msg, true)
     }
 
     function addOther(content) {

@@ -8,6 +8,8 @@ import TextArea from "antd/es/input/TextArea.js";
 import ParamSetting from "../paramSetting/index.jsx";
 import {decode} from "../../../../utils/param-util.js";
 import  {BidirectionalMap} from '../../../../utils/BidirectionalMap.js';
+import JsEditor from "../../../../components/JsEditor.jsx";
+import {safeEval} from "../../../../utils/common.js";
 const OperationsSlot = {
     left: <span style={{marginRight:10}}>发送模式:</span>
 };
@@ -15,6 +17,7 @@ const OperationsSlot = {
 const sendModeMap = new BidirectionalMap({
     'plain':1,
     'param':2,
+    'js':3,
 })
 const tip = (
     <div>
@@ -41,12 +44,15 @@ const SendSetting = ({id}) => {
         pattern: 'test%d%a',
         bounds: []
     });
+    const [jsScript, setJsScript] = useState(sendConfig.jsScript || 'function() {\n}');
 
     useEffect(() => {
+        console.log(sendConfig.jsScript)
         setTimesMode(sendConfig.timesMode);
         setSendMode(sendConfig.sendMode);
         setTimes(sendConfig.times);
         setInterval(sendConfig.interval);
+        setJsScript(sendConfig.jsScript);
 
         if (sendConfig.paramConfig) {
             setParamConfig(sendConfig.paramConfig)
@@ -58,8 +64,6 @@ const SendSetting = ({id}) => {
     };
 
     const handleSendMode = (key) => {
-        console.log(sendModeMap)
-        console.log(sendModeMap.getValue(key));
         setSendMode(sendModeMap.getValue(key))
     };
 
@@ -82,6 +86,7 @@ const SendSetting = ({id}) => {
             sendMode,
             times,
             interval,
+            jsScript,
             paramConfig
         }
         dispatch(updateSendConfig({id: id, sendConfig: conf}))
@@ -90,6 +95,13 @@ const SendSetting = ({id}) => {
     const paramConfirm = (conf) => {
         setParamConfig(conf)
     }
+    const handleJsEditorBlur= (code) => {
+        setJsScript(code)
+        console.log(code)
+        let f = safeEval(code)
+        console.log(f())
+
+    };
     const handleCancel = () => {
         setIsModalOpen(false);
     };
@@ -146,6 +158,11 @@ const SendSetting = ({id}) => {
                                     </Popover>
                                     <ParamSetting paramConfig={paramConfig} paramConfirm={paramConfirm}/>
                                 </div>
+                            </div>
+                        </Tabs.TabPane>
+                        <Tabs.TabPane key={'js'} tab={'使用js生成'}>
+                            <div className={'row'}>
+                                <JsEditor jsScript={jsScript} onBlur={handleJsEditorBlur}/>
                             </div>
                         </Tabs.TabPane>
                     </Tabs>
