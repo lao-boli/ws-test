@@ -1,7 +1,7 @@
-import React, {Fragment, useEffect, useRef,} from "react";
+import {Fragment,} from "react";
 import {generateUid, isWebSocketNotEmpty, safeEval, val2Str} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
-import {Button, Dropdown, Input, List, Tooltip,message} from "antd";
+import {Button, Dropdown, Input, message, Tooltip} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
 import './chat.less'
 import SendSetting from "./components/sendSetting/index.jsx";
@@ -9,14 +9,17 @@ import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {
     addScheduleTask,
-    addWebsocket, cancelScheduleTask,
-    removeWebsocket, updateSendingState,
+    addWebsocket,
+    cancelScheduleTask,
+    removeWebsocket,
+    updateSendingState,
 } from "../../reducer/wsReducer.js";
 
-import {cleanMsg, addMsg, updateAddr, updateContent} from "../../reducer/clientReducer.js";
+import {addMsg, cleanMsg, updateAddr, updateContent} from "../../reducer/clientReducer.js";
 import {ClockCircleOutlined, DisconnectOutlined, LinkOutlined, SendOutlined, StopOutlined} from "@ant-design/icons";
 import {createMsg} from "../../utils/param-util.js";
 import ScrollList from "../../components/ScorllList.jsx";
+
 export default function Chat() {
     const dispatch = useDispatch()
     const {uuid} = useParams()
@@ -27,12 +30,6 @@ export default function Chat() {
         content
     } = useSelector(state => state.clientReducer.clients[uuid]) || {}
     const {socket, sending} = useSelector(state => state.connReducer.connections[uuid]) || {}
-
-    let listRef = useRef(null)
-    // useEffect(() => {
-    //     const scrollContainer = listRef.current;
-    //     scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    // }, [msgList]);
 
     // region websocket
     const initWebsock = () => {
@@ -148,7 +145,7 @@ export default function Chat() {
         let interval = null
         if (sendConfig.timesMode === 1) {
             interval = setInterval(() => {
-                if (sendConfig.times >= count) {
+                if (sendConfig.times > count) {
                     count++
                     handleSendMsg()
                 } else {
