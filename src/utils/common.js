@@ -1,7 +1,8 @@
-export function safeEval(script){
-    return Function('"use strict";return ' +script)();
+export function safeEval(script) {
+    return Function('"use strict";return ' + script)();
 }
-export function generateUid(){
+
+export function generateUid() {
     let dt = new Date().getTime();
     let uuid = 'xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         let r = (dt + Math.random() * 16) % 16 | 0;
@@ -21,14 +22,23 @@ export function isNotEmpty(obj) {
 }
 
 /**
+ * 变量转为字符串，当变量为null或undefined时，转换成字符串 'null' 和 'undefined'
+ * @param val
+ * @returns {string|string}
+ */
+export function val2Str(val) {
+    return (val !== null && val !== undefined) ? val.toString() : (val === null ? 'null' : 'undefined');
+}
+
+/**
  * 判断一个websocket对象是否为空
  * @param ws
  * @returns {boolean}
  */
 export function isWebSocketNotEmpty(ws) {
-    if (isWebSocket(ws)){
+    if (isWebSocket(ws)) {
         return ws && (ws.readyState === 1 || ws.readyState === 2);
-    }else {
+    } else {
         return false
     }
 }

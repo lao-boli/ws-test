@@ -1,4 +1,4 @@
-import {Button, Input, Modal, Popover, Radio, Space, Tabs, Tooltip} from 'antd';
+import {Button, Input, message, Modal, Popover, Radio, Space, Tabs, Tooltip} from 'antd';
 import {useEffect, useState} from 'react';
 import {QuestionCircleOutlined, SettingOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
@@ -7,9 +7,10 @@ import './sendSetting.css'
 import TextArea from "antd/es/input/TextArea.js";
 import ParamSetting from "../paramSetting/index.jsx";
 import {decode} from "../../../../utils/param-util.js";
-import  {BidirectionalMap} from '../../../../utils/BidirectionalMap.js';
+import {BidirectionalMap} from '../../../../utils/BidirectionalMap.js';
 import JsEditor from "../../../../components/JsEditor.jsx";
 import {safeEval} from "../../../../utils/common.js";
+
 const OperationsSlot = {
     left: <span style={{marginRight:10}}>发送模式:</span>
 };
@@ -30,6 +31,18 @@ const tip = (
         <p>X — 大写的16进制整数</p>
     </div>
 )
+
+const jsTip = (
+    <div>
+        <p>保证所写的内容为如下形式,否则不会被正确解析</p>
+        <p>
+            function() {'{'}<br/>
+            &emsp;{'// your code'}<br/>
+            &emsp;{'return result'}<br/>
+            {'}'}
+        </p>
+    </div>
+)
 // s/\(.*\)/<p>\1<\/p>/g
 const SendSetting = ({id}) => {
     let dispatch = useDispatch();
@@ -41,7 +54,7 @@ const SendSetting = ({id}) => {
     const [interval, setInterval] = useState(sendConfig.interval);
     const [sendMode, setSendMode] = useState(sendConfig.sendMode);
     const [paramConfig, setParamConfig] = useState(sendConfig.paramConfig || {
-        pattern: 'test%d%a',
+        pattern: '',
         bounds: []
     });
     const [jsScript, setJsScript] = useState(sendConfig.jsScript || 'function() {\n}');
@@ -97,10 +110,10 @@ const SendSetting = ({id}) => {
     }
     const handleJsEditorBlur= (code) => {
         setJsScript(code)
-        console.log(code)
         let f = safeEval(code)
-        console.log(f())
-
+        if (!f()){
+            message.error('js 表达式的返回值为undefined或null')
+        }
     };
     const handleCancel = () => {
         setIsModalOpen(false);
@@ -151,6 +164,7 @@ const SendSetting = ({id}) => {
                             <div className={'row'}>
                                 <TextArea rows={3} value={paramConfig.pattern}
                                           onChange={handlePatternChange}
+                                          placeHolder={'%d %.2f %x %X %o'}
                                 />
                                 <div>
                                     <Popover content={tip} title="格式参考" trigger="click">
@@ -161,8 +175,15 @@ const SendSetting = ({id}) => {
                             </div>
                         </Tabs.TabPane>
                         <Tabs.TabPane key={'js'} tab={'使用js生成'}>
+                            <div style={{display: "flex" ,justifyContent: "end"}}>
+                                <div style={{width:'100%',marginRight:'5px',border:'solid 1px #91caff'}}>
+                                    <JsEditor jsScript={jsScript} onBlur={handleJsEditorBlur}/>
+                                </div>
+                                <Popover content={jsTip} title="格式参考" trigger="click">
+                                    <QuestionCircleOutlined/>
+                                </Popover>
+                            </div>
                             <div className={'row'}>
-                                <JsEditor jsScript={jsScript} onBlur={handleJsEditorBlur}/>
                             </div>
                         </Tabs.TabPane>
                     </Tabs>

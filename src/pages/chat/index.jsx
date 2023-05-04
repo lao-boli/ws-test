@@ -1,5 +1,5 @@
 import {Fragment, useEffect, useRef,} from "react";
-import {generateUid, isWebSocketNotEmpty, safeEval} from "../../utils/common.js";
+import {generateUid, isWebSocketNotEmpty, safeEval, val2Str} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
 import {Button, Dropdown, Input, List, Tooltip,message} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
@@ -112,7 +112,6 @@ export default function Chat() {
     }
 
     const handleLink = () => {
-        console.log(isOpened())
         if (isOpened()) {
             closeSocket()
         } else {
@@ -126,7 +125,7 @@ export default function Chat() {
         const msg = {
             host,
             uid: generateUid(),
-            content: content,
+            content: val2Str(content),
             isMine: isMine
         }
         dispatch(addMsg({id: uuid, message: msg}))

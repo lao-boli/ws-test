@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './index.css'
 import {curTime} from "../../../../utils/time-util.js";
-const Message = ({uid,host = '127.0.0.1',content = 'content',isMine = true}) => {
+const Message = ({uid,host = '127.0.0.1',content = '',isMine = true}) => {
     const [time] = useState(curTime());
     return (
         <div key={uid} style={{display: "flex"}}>
