@@ -1,4 +1,4 @@
-import {Button, Layout, theme} from 'antd';
+import {Layout, theme} from 'antd';
 import {useEffect, useRef, useState} from 'react';
 import './App.css';
 import ClientList from "./pages/clientList/index.jsx";
@@ -67,10 +67,9 @@ const App = () => {
                     position:isMobile ? "fixed":"",
                     height:isMobile ? '100%':'',
                     zIndex:'50',
-                    willChange: 'width',
                     background: "white",
                     maxHeight: document.documentElement.clientHeight,
-                    transition: 'all .2s,background 0s',
+                    transition: 'all .2s',
                 }}
                 collapsed={collapsed}
                 onCollapse={(value) => setCollapsed(value)}
@@ -79,7 +78,8 @@ const App = () => {
 
                 <div style={{
                     maxHeight: document.documentElement.clientHeight,
-                    width: '240px',
+                    transition: 'all .2s',
+                    width: collapsed? 0:'240px',
                     overflow: "hidden",
                     overflowY: "auto"
                 }}>

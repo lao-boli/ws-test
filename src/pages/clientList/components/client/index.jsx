@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import {Input, Button, Space, Card, Tooltip} from 'antd';
-import {EditOutlined, DeleteOutlined, CloseCircleOutlined} from '@ant-design/icons';
+import {useState} from 'react';
+import {Button, Input, Space, Tooltip} from 'antd';
+import {CloseCircleOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
 import './client.css'
-import {Navigate, useLocation, useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {removeClient, updateTitle} from "../../../../reducer/clientReducer.js";
 
@@ -33,8 +33,9 @@ export default function Client({uuid}) {
         setValue(event.target.value);
     };
 
-    const handleDelete = () => {
+    const handleDelete = (e) => {
         dispatch(removeClient({ id:uuid }))
+        e.stopPropagation()
     };
 
     const toChat = () => {
