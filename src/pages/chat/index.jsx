@@ -1,4 +1,4 @@
-import {Fragment, useEffect, useRef,} from "react";
+import React, {Fragment, useEffect, useRef,} from "react";
 import {generateUid, isWebSocketNotEmpty, safeEval, val2Str} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
 import {Button, Dropdown, Input, List, Tooltip,message} from "antd";
@@ -16,6 +16,7 @@ import {
 import {cleanMsg, addMsg, updateAddr, updateContent} from "../../reducer/clientReducer.js";
 import {ClockCircleOutlined, DisconnectOutlined, LinkOutlined, SendOutlined, StopOutlined} from "@ant-design/icons";
 import {createMsg} from "../../utils/param-util.js";
+import ScrollList from "../../components/ScorllList.jsx";
 export default function Chat() {
     const dispatch = useDispatch()
     const {uuid} = useParams()
@@ -28,10 +29,10 @@ export default function Chat() {
     const {socket, sending} = useSelector(state => state.connReducer.connections[uuid]) || {}
 
     let listRef = useRef(null)
-    useEffect(() => {
-        const scrollContainer = listRef.current;
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    }, [msgList]);
+    // useEffect(() => {
+    //     const scrollContainer = listRef.current;
+    //     scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    // }, [msgList]);
 
     // region websocket
     const initWebsock = () => {
@@ -215,11 +216,7 @@ export default function Chat() {
                         </Button>
                     </Dropdown>
                 </div>
-                <div ref={listRef} style={{scrollBehavior: "smooth", overflow: "auto", height: '100%'}}>
-                    <List>
-                        {list}
-                    </List>
-                </div>
+                <ScrollList items={list}/>
                 <div className={'footer'}>
                     <SendSetting id={uuid}/>
                     <TextArea rows={1} value={content} disabled={!isOpened()} onChange={contentChange}/>
@@ -229,6 +226,7 @@ export default function Chat() {
                             {sending ? (<StopOutlined/>) : (<ClockCircleOutlined/>)}
                         </Button>
                     </Tooltip>
+
 
                     <Tooltip title={'发送'}>
                         <Button disabled={!isOpened()} onClick={handleSendMsg}><SendOutlined/></Button>
