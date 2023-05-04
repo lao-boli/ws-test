@@ -13,15 +13,29 @@ const {Sider, Content} = Layout;
 const App = () => {
     const collapseIcon = useRef()
     const [collapsed, setCollapsed] = useState(false);
+    const [isMobile, setIsMobile] = useState(document.documentElement.clientWidth < 600);
+    const [clientHeight, setClientHeight] = useState(document.documentElement.clientHeight);
     const {
         token: {colorBgContainer},
     } = theme.useToken();
     const dispatch = useDispatch()
+
+    function resetIsMobile() {
+        return setIsMobile(document.documentElement.clientWidth < 600);
+    }
+    function resetClientHeight() {
+        return setClientHeight(document.documentElement.clientHeight);
+    }
+
     useEffect(() => {
         dispatch(load())
         window.addEventListener('beforeunload', saveClients)
+        window.addEventListener('resize', resetIsMobile)
+        window.addEventListener('resize', resetClientHeight)
         return () => {
             window.removeEventListener('beforeunload', saveClients)
+            window.removeEventListener('resize', resetIsMobile)
+            window.removeEventListener('resize', resetClientHeight)
         }
     }, [])
     const saveClients = () => {
@@ -50,6 +64,9 @@ const App = () => {
                 width={'240px'}
                 collapsible
                 style={{
+                    position:isMobile ? "fixed":"",
+                    height:isMobile ? '100%':'',
+                    zIndex:'50',
                     willChange: 'width',
                     background: "white",
                     maxHeight: document.documentElement.clientHeight,
@@ -59,6 +76,7 @@ const App = () => {
                 onCollapse={(value) => setCollapsed(value)}
                 className={collapsed ? 'collapsed' : ''}
             >
+
                 <div style={{
                     maxHeight: document.documentElement.clientHeight,
                     width: '240px',
@@ -71,12 +89,25 @@ const App = () => {
                     <LeftOutlined/>
                 </div>
             </Sider>
+            <div className={'mask'}
+                 style={{
+                     display: isMobile ? (collapsed ? 'none' : 'block') : 'none',
+                     position:"fixed",
+                     backgroundColor:'black',
+                     zIndex:'10',
+                     width:'100%',
+                     height: '100%',
+                     opacity: '0.5',
+                 }}
+            >
+            </div>
+
             <Layout>
                 <Content
                     style={{
                         margin: '0px 16px',
                         padding: 24,
-                        maxHeight: document.documentElement.clientHeight,
+                        maxHeight: clientHeight,
                         background: colorBgContainer,
                     }}
                 >

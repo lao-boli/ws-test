@@ -8,13 +8,7 @@
   width: 100%;
   min-height: 100%;
 }
-.ant-layout-sider {
-  width: 200px;
-  transition: width 0.3s ease;
-}
-.ant-layout-sider.collapsed {
-  width: 80px;
-}
+
 .collapsed-icon {
   cursor: pointer;
   position: absolute;
