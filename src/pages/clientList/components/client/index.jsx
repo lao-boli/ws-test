@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Button, Input, Space, Tooltip} from 'antd';
 import {CloseCircleOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
-import './client.css'
+import {title as titleStyle,titleActive,mainActive,main,btns} from './client.module.css'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {removeClient, updateTitle} from "../../../../reducer/clientReducer.js";
@@ -43,8 +43,8 @@ export default function Client({uuid}) {
     };
 
     return (
-        <div onClick={toChat} className={uuid === curPath ? 'main main-active':'main'}>
-            <Space className={uuid === curPath ? 'title title-active':'title'}>
+        <div onClick={toChat} className={uuid === curPath ? `${main} ${mainActive}` : main}>
+            <Space className={uuid === curPath ? `${titleStyle} ${titleActive}`:titleStyle}>
                 {editing ? (
                     <Input
                         size={'small'}
@@ -63,7 +63,7 @@ export default function Client({uuid}) {
                 )}
 
             </Space>
-            <Space className={'btns'}>
+            <Space className={btns}>
                 {editing ? (
                     <Button onClick={handleCancel} size="small">
                         <CloseCircleOutlined/>

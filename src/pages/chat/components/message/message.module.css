@@ -1,4 +1,4 @@
-.chat-bubble {
+.chatBubble {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -13,7 +13,8 @@
 
 .mine {
     margin-left: auto;
-}.mine .host,
+}
+.mine .host,
  .mine .time {
     text-align: end;
 }
@@ -32,3 +33,4 @@
     background-color: #1890ff;
     color: #fff;
 }
+

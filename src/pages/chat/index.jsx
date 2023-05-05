@@ -3,7 +3,7 @@ import {generateUid, isWebSocketNotEmpty, safeEval, val2Str} from "../../utils/c
 import Message from "./components/message/index.jsx";
 import {Button, Dropdown, Input, message, Tooltip} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
-import './chat.less'
+import {header,footer} from './chat.module.less'
 import SendSetting from "./components/sendSetting/index.jsx";
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
@@ -198,7 +198,7 @@ export default function Chat() {
     return (
         <Fragment>
             <div style={{height: '100%', display: "flex", flexDirection: "column"}}>
-                <div className="header">
+                <div className={header}>
                     <Input disabled={isOpened()} value={addr} onChange={addrChange} addonBefore="ws://"
                            defaultValue="127.0.0.1:10250"/>
 
@@ -214,7 +214,7 @@ export default function Chat() {
                     </Dropdown>
                 </div>
                 <ScrollList items={list}/>
-                <div className={'footer'}>
+                <div className={footer}>
                     <SendSetting id={uuid}/>
                     <TextArea rows={1} value={content} disabled={!isOpened()} onChange={contentChange}/>
                     <Tooltip title={sending ? '停止发送' : '定时发送'}>

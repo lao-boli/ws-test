@@ -1,6 +1,6 @@
 import {Input} from 'antd';
 import {useEffect, useState} from 'react';
-import './paramSetting.css'
+import {row} from './paramItem.module.css'
 import HexInput from "../../../../components/HexInput.jsx";
 
 const ParamItem = ({uid, paramConfig, dataChange}) => {
@@ -26,7 +26,7 @@ const ParamItem = ({uid, paramConfig, dataChange}) => {
 
     return (
         <>
-            <div className={'row'}>
+            <div className={row}>
                 <div style={{flexShrink: 0}}>
                     变动数值:{val}
                 </div>

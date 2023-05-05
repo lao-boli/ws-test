@@ -3,7 +3,7 @@ import {useEffect, useState} from 'react';
 import {QuestionCircleOutlined, SettingOutlined} from "@ant-design/icons";
 import {useDispatch, useSelector} from "react-redux";
 import {updateSendConfig} from "../../../../reducer/clientReducer.js";
-import './sendSetting.css'
+import {row} from './sendSetting.module.css'
 import TextArea from "antd/es/input/TextArea.js";
 import ParamSetting from "../paramSetting/index.jsx";
 import {decode} from "../../../../utils/param-util.js";
@@ -60,7 +60,6 @@ const SendSetting = ({id}) => {
     const [jsScript, setJsScript] = useState(sendConfig.jsScript || 'function() {\n}');
 
     useEffect(() => {
-        console.log(sendConfig.jsScript)
         setTimesMode(sendConfig.timesMode);
         setSendMode(sendConfig.sendMode);
         setTimes(sendConfig.times);
@@ -161,7 +160,7 @@ const SendSetting = ({id}) => {
                             </div>
                         </Tabs.TabPane>
                         <Tabs.TabPane key={'param'} tab={'自定义格式'}>
-                            <div className={'row'}>
+                            <div className={row}>
                                 <TextArea rows={3} value={paramConfig.pattern}
                                           onChange={handlePatternChange}
                                           placeHolder={'%d %.2f %x %X %o'}
@@ -183,7 +182,7 @@ const SendSetting = ({id}) => {
                                     <QuestionCircleOutlined/>
                                 </Popover>
                             </div>
-                            <div className={'row'}>
+                            <div className={row}>
                             </div>
                         </Tabs.TabPane>
                     </Tabs>

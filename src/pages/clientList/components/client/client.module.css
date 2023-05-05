@@ -10,7 +10,7 @@
     border-color: #e5e7eb;
     padding: 5px;
 }
-.main-active {
+.mainActive {
     background-color: #e6f4ff;
     border-color: #91caff;
 
@@ -19,7 +19,7 @@
     cursor: pointer;
     background-color: #f0f0f0;
 }
-.main-active:hover {
+.mainActive:hover {
     background-color: #e6f4ff;
 }
 .title {
@@ -31,7 +31,7 @@
     margin-right: 5px;
 }
 
-.title-active {
+.titleActive {
     color: #1677ff;
 }
 .btns {
