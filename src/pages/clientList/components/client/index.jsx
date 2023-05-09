@@ -1,14 +1,14 @@
 import {useState} from 'react';
-import {Button, Input, Space, Tooltip} from 'antd';
+import {Button, Input, Popconfirm, Space, Tooltip} from 'antd';
 import {CloseCircleOutlined, DeleteOutlined, EditOutlined} from '@ant-design/icons';
-import {title as titleStyle,titleActive,mainActive,main,btns} from './client.module.css'
+import {title as titleStyle, titleActive, mainActive, main, btns} from './client.module.css'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import {removeClient, setLastClient, updateTitle} from "../../../../reducer/clientReducer.js";
 
 export default function Client({uuid}) {
     const {pathname} = useLocation()
-    const curPath = pathname.substring(pathname.lastIndexOf('/')+1)
+    const curPath = pathname.substring(pathname.lastIndexOf('/') + 1)
     const dispatch = useDispatch()
     const {title} = useSelector(state => state.clientReducer.clients[uuid]) || {}
     const [editing, setEditing] = useState(false);
@@ -26,7 +26,7 @@ export default function Client({uuid}) {
 
     const handleSave = () => {
         setEditing(false);
-        dispatch(updateTitle({id:uuid,title:value}))
+        dispatch(updateTitle({id: uuid, title: value}))
     };
 
     const handleChange = (event) => {
@@ -34,8 +34,11 @@ export default function Client({uuid}) {
     };
 
     const handleDelete = (e) => {
-        dispatch(removeClient({ id:uuid }))
+        dispatch(removeClient({id: uuid}))
         e.stopPropagation()
+    };
+    const handleDeleteClick = e => {
+        e.stopPropagation();
     };
 
     const toChat = () => {
@@ -45,7 +48,7 @@ export default function Client({uuid}) {
 
     return (
         <div onClick={toChat} className={uuid === curPath ? `${main} ${mainActive}` : main}>
-            <Space className={uuid === curPath ? `${titleStyle} ${titleActive}`:titleStyle}>
+            <Space className={uuid === curPath ? `${titleStyle} ${titleActive}` : titleStyle}>
                 {editing ? (
                     <Input
                         size={'small'}
@@ -74,9 +77,17 @@ export default function Client({uuid}) {
                         <EditOutlined/>
                     </Button>
                 )}
-                <Button onClick={handleDelete} size="small">
-                    <DeleteOutlined/>
-                </Button>
+                <Popconfirm
+                    placement="topRight"
+                    title={'是否确认删除？'}
+                    onConfirm={handleDelete}
+                    okText="是"
+                    cancelText="否"
+                >
+                    <Button onClick={handleDeleteClick} size="small">
+                        <DeleteOutlined/>
+                    </Button>
+                </Popconfirm>
             </Space>
         </div>
     );
