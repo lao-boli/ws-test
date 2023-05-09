@@ -3,8 +3,8 @@ import {useEffect, useRef, useState} from 'react';
 import './App.css';
 import ClientList from "./pages/clientList/index.jsx";
 import Chat from "./pages/chat/index.jsx";
-import {useRoutes} from "react-router-dom";
-import {useDispatch} from "react-redux";
+import {Navigate, useRoutes} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
 import {load, save} from "./reducer/clientReducer.js";
 import {LeftOutlined} from "@ant-design/icons";
 
@@ -38,6 +38,8 @@ const App = () => {
             window.removeEventListener('resize', resetClientHeight)
         }
     }, [])
+    let clients = useSelector(state => state.clientReducer.clients)
+    let lastClient = useSelector(state => state.clientReducer.lastClient)
     const saveClients = () => {
         dispatch(save())
     }
@@ -53,6 +55,7 @@ const App = () => {
 
 
     const routes = useRoutes([
+        { path: "/", element: <Navigate to={`/chat/${lastClient || Object.keys(clients)[0]}`}/> },
         {path: "/chat/:uuid", element: <Chat/>},
     ]);
 

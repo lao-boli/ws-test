@@ -3,9 +3,20 @@ import {createSlice} from '@reduxjs/toolkit'
 export const clientSlice = createSlice({
     name: 'clientReducer',
     initialState: {
-        clients: {}
+        clients: {},
+        lastClient:''
     },
     reducers: {
+
+        setLastClient: (state, action) => {
+            if(state.clients[action.payload] == null) {
+                return state;
+            }
+            return {
+                ...state,
+                lastClient: action.payload
+            };
+        },
         addClient: (state, action) => {
             return {
                 ...state,
@@ -130,23 +141,29 @@ export const clientSlice = createSlice({
         },
         save: (state) => {
             localStorage.setItem('clientConfig',JSON.stringify(state.clients))
+            localStorage.setItem('lastClient',state.lastClient)
             return state;
         },
         load: (state) => {
             let conf = localStorage.getItem('clientConfig');
+            let last = localStorage.getItem('lastClient');
             if (conf){
                 const clients = JSON.parse(conf)
                 return {
                     ...state,
-                    clients:clients
+                    clients:clients,
+                    lastClient: last || ''
                 };
             }else {
-                return state
+                return {
+                    ...state,
+                    lastClient: last || ''
+                };
             }
         },
     },
 })
 
-export const {load, save, addClient,removeClient, updateTitle,updateContent,updateAddr,updateSendConfig,addMsg,cleanMsg } = clientSlice.actions
+export const {load, save,setLastClient,addClient,removeClient, updateTitle,updateContent,updateAddr,updateSendConfig,addMsg,cleanMsg } = clientSlice.actions
 
 export default clientSlice.reducer

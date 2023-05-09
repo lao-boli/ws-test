@@ -4,7 +4,7 @@ import {CloseCircleOutlined, DeleteOutlined, EditOutlined} from '@ant-design/ico
 import {title as titleStyle,titleActive,mainActive,main,btns} from './client.module.css'
 import {useLocation, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {removeClient, updateTitle} from "../../../../reducer/clientReducer.js";
+import {removeClient, setLastClient, updateTitle} from "../../../../reducer/clientReducer.js";
 
 export default function Client({uuid}) {
     const {pathname} = useLocation()
@@ -39,6 +39,7 @@ export default function Client({uuid}) {
     };
 
     const toChat = () => {
+        dispatch(setLastClient(uuid))
         nav('/chat/' + uuid)
     };
 
