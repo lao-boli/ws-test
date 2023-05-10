@@ -3,7 +3,7 @@ import {generateUid, isWebSocketNotEmpty, safeEval, val2Str} from "../../utils/c
 import Message from "./components/message/index.jsx";
 import {Button, Dropdown, Input, message, Tooltip} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
-import {header,footer} from './chat.module.less'
+import {header, footer} from './chat.module.less'
 import SendSetting from "./components/sendSetting/index.jsx";
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
@@ -64,10 +64,10 @@ export default function Chat() {
     }
     const handleSendMsg = () => {
         if (isWebSocketNotEmpty(socket)) {
-            if (sendConfig.sendMode === 1){
+            if (sendConfig.sendMode === 1) {
                 sendMsg(content)
             }
-            if (sendConfig.sendMode === 2){
+            if (sendConfig.sendMode === 2) {
                 try {
                     const msg = createMsg(sendConfig.paramConfig);
                     sendMsg(msg)
@@ -75,7 +75,7 @@ export default function Chat() {
                     message.error(e.toString());
                 }
             }
-            if (sendConfig.sendMode === 3){
+            if (sendConfig.sendMode === 3) {
                 try {
                     const msg = safeEval(sendConfig.jsScript)();
                     sendMsg(msg)
@@ -178,11 +178,30 @@ export default function Chat() {
         if (key === 'clear') {
             dispatch(cleanMsg({id: uuid}))
         }
+        if (key === 'log') {
+        }
+        if (key === 'chat') {
+        }
     };
     const items = [
         {
             label: '清空',
             key: 'clear',
+        },
+        {
+            label: '消息模式',
+            key: 'msgMode',
+            children: [
+                {
+                    label: 'chat',
+                    key: 'chat',
+                },
+                {
+                    label: 'log',
+                    key: 'log',
+                },
+
+            ]
         },
     ];
     const list = msgList.map(val =>
@@ -207,7 +226,12 @@ export default function Chat() {
                             {isOpened() ? (<DisconnectOutlined/>) : (<LinkOutlined/>)}
                         </Button>
                     </Tooltip>
-                    <Dropdown placement="bottomLeft" menu={{items, onClick: menuClick,}} trigger={['click']}>
+                    <Dropdown placement="bottomLeft"
+                              menu={{
+                                  items,
+                                  onClick: menuClick,
+                              }}
+                              trigger={['click']}>
                         <Button onClick={(e) => e.preventDefault()}>
                             ...
                         </Button>
