@@ -1,9 +1,9 @@
-import {Fragment,} from "react";
+import {Fragment, useState,} from "react";
 import {generateUid, isWebSocketNotEmpty, safeEval, val2Str} from "../../utils/common.js";
 import Message from "./components/message/index.jsx";
-import {Button, Dropdown, Input, message, Tooltip} from "antd";
+import {Button, Input, message, Popover, Tooltip} from "antd";
 import TextArea from "antd/es/input/TextArea.js";
-import {header, footer} from './chat.module.less'
+import {footer, header} from './chat.module.less'
 import SendSetting from "./components/sendSetting/index.jsx";
 import {useParams} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
@@ -15,10 +15,11 @@ import {
     updateSendingState,
 } from "../../reducer/wsReducer.js";
 
-import {addMsg, cleanMsg, updateAddr, updateContent} from "../../reducer/clientReducer.js";
+import {addMsg, updateAddr, updateContent} from "../../reducer/clientReducer.js";
 import {ClockCircleOutlined, DisconnectOutlined, LinkOutlined, SendOutlined, StopOutlined} from "@ant-design/icons";
 import {createMsg} from "../../utils/param-util.js";
 import ScrollList from "../../components/ScorllList.jsx";
+import MoreOption from "./components/moreOption/index.jsx";
 
 export default function Chat() {
     const dispatch = useDispatch()
@@ -26,10 +27,16 @@ export default function Chat() {
     const {
         messages: msgList = [],
         addr,
+        displayMode,
         sendConfig,
         content
     } = useSelector(state => state.clientReducer.clients[uuid]) || {}
     const {socket, sending} = useSelector(state => state.connReducer.connections[uuid]) || {}
+
+    const [moreOptOpen, setMoreOptOpen] = useState(false);
+    const handleOpenChange = (newOpen) => {
+        setMoreOptOpen(newOpen);
+    };
 
     // region websocket
     const initWebsock = () => {
@@ -174,38 +181,9 @@ export default function Chat() {
         }
     }
 
-    const menuClick = ({key}) => {
-        if (key === 'clear') {
-            dispatch(cleanMsg({id: uuid}))
-        }
-        if (key === 'log') {
-        }
-        if (key === 'chat') {
-        }
-    };
-    const items = [
-        {
-            label: '清空',
-            key: 'clear',
-        },
-        {
-            label: '消息模式',
-            key: 'msgMode',
-            children: [
-                {
-                    label: 'chat',
-                    key: 'chat',
-                },
-                {
-                    label: 'log',
-                    key: 'log',
-                },
-
-            ]
-        },
-    ];
     const list = msgList.map(val =>
         <Message
+            displayMode={displayMode}
             key={val.uid}
             host={val.host}
             uid={val.uid}
@@ -226,16 +204,16 @@ export default function Chat() {
                             {isOpened() ? (<DisconnectOutlined/>) : (<LinkOutlined/>)}
                         </Button>
                     </Tooltip>
-                    <Dropdown placement="bottomLeft"
-                              menu={{
-                                  items,
-                                  onClick: menuClick,
-                              }}
-                              trigger={['click']}>
+
+                    <Popover open={moreOptOpen}
+                             onOpenChange={handleOpenChange}
+                             trigger={'click'}
+                             content={<MoreOption hideParent={() => setMoreOptOpen(false)} id={uuid}/>}>
                         <Button onClick={(e) => e.preventDefault()}>
                             ...
                         </Button>
-                    </Dropdown>
+                    </Popover>
+
                 </div>
                 <ScrollList items={list}/>
                 <div className={footer}>

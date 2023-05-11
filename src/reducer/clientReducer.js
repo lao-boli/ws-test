@@ -26,6 +26,7 @@ export const clientSlice = createSlice({
                         id: action.payload.id,
                         title: action.payload.title,
                         addr: action.payload.addr,
+                        displayMode: action.payload.displayMode,
                         sendConfig: action.payload.sendConfig,
                         content:action.payload.content|| '',
                         messages: []
@@ -34,7 +35,6 @@ export const clientSlice = createSlice({
             };
         },
         removeClient: (state, action) => {
-            console.log(action.payload.id)
             const { [action.payload.id]: _, ...restClients } =
             state.clients || {};
             return {
@@ -90,6 +90,24 @@ export const clientSlice = createSlice({
                 }
             };
         },
+
+        updateDisplayMode: (state, action) => {
+            if(state.clients[action.payload.id] == null) {
+                return state;
+            }
+
+            return {
+                ...state,
+                clients: {
+                    ...state.clients,
+                    [action.payload.id]: {
+                        ...state.clients[action.payload.id],
+                        displayMode: action.payload.displayMode,
+                    }
+                }
+            };
+        },
+
 
         updateContent: (state, action) => {
             if(state.clients[action.payload.id] == null) {
@@ -164,6 +182,6 @@ export const clientSlice = createSlice({
     },
 })
 
-export const {load, save,setLastClient,addClient,removeClient, updateTitle,updateContent,updateAddr,updateSendConfig,addMsg,cleanMsg } = clientSlice.actions
+export const {load, save,setLastClient,addClient,removeClient,updateDisplayMode, updateTitle,updateContent,updateAddr,updateSendConfig,addMsg,cleanMsg } = clientSlice.actions
 
 export default clientSlice.reducer

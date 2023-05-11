@@ -11,6 +11,7 @@ export default function ClientList() {
         id: generateUid(),
         title: 'client',
         addr: '127.0.0.1:10250',
+        displayMode:'chat',
         sendConfig: {
             timesMode: 1,
             sendMode: 1,
