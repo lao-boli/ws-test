@@ -35,6 +35,10 @@ export default function Client({uuid}) {
 
     const handleDelete = (e) => {
         dispatch(removeClient({id: uuid}))
+        // 删除的是当前激活的client，重定向到"/"
+        if (uuid === curPath){
+            nav('/')
+        }
         e.stopPropagation()
     };
     const handleDeleteClick = e => {

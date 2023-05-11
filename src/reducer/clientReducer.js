@@ -35,12 +35,20 @@ export const clientSlice = createSlice({
             };
         },
         removeClient: (state, action) => {
-            const { [action.payload.id]: _, ...restClients } =
-            state.clients || {};
-            return {
-                ...state,
-                clients: restClients
-            };
+            const { [action.payload.id]: _, ...restClients } = state.clients || {};
+            if (action.payload.id === state.lastClient){
+                return {
+                    ...state,
+                    clients: restClients,
+                    lastClient: ''
+                };
+            }else {
+                return {
+                    ...state,
+                    clients: restClients,
+                };
+
+            }
         },
 
         updateSendConfig: (state, action) => {
