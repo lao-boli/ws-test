@@ -20,6 +20,7 @@ import {ClockCircleOutlined, DisconnectOutlined, LinkOutlined, SendOutlined, Sto
 import {createMsg} from "../../utils/param-util.js";
 import ScrollList from "../../components/ScorllList.jsx";
 import MoreOption from "./components/moreOption/index.jsx";
+import {curTime} from "../../utils/time-util.js";
 
 export default function Chat() {
     const dispatch = useDispatch()
@@ -130,6 +131,7 @@ export default function Chat() {
         const msg = {
             host,
             uid: generateUid(),
+            time:curTime(),
             content: val2Str(content),
             isMine: isMine
         }
@@ -187,6 +189,7 @@ export default function Chat() {
             key={val.uid}
             host={val.host}
             uid={val.uid}
+            time={val.time}
             content={val.content}
             isMine={val.isMine}
         />
