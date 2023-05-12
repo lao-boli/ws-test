@@ -12,11 +12,13 @@
 ### 自定义消息
 * 使用sprint占位符
 <img src="https://raw.githubusercontent.com/lao-boli/ws-test/master/image/sprintf.png" width="600px">
+
 * JavaScript
 <img src="https://raw.githubusercontent.com/lao-boli/ws-test/master/image/js.png" width="600px">
+
 ### 移动端适配
 <div style="display: flex">
-<img style="margin-right: 10px" src="https://raw.githubusercontent.com/lao-boli/ws-test/master/image/mobile2.png" width="300px">
+<img style="margin-right: 20px" src="https://raw.githubusercontent.com/lao-boli/ws-test/master/image/mobile2.png" width="300px">
 <img src="https://raw.githubusercontent.com/lao-boli/ws-test/master/image/mobile1.png" width="300px">
 </div>
 
